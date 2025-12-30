@@ -1,0 +1,11 @@
+yfinance
+pandas
+pandas_datareader
+numpy
+scikit-learn
+Flask
+matplotlib
+seaborn
+Werkzeug
+wheel
+keras
