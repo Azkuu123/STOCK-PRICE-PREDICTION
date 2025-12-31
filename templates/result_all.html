@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Price Prediction Result</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+    }
+
+    .result-container {
+      display: none;
+      animation: emerge 1s ease-out;
+      text-align: center;
+      background-color: #ffffffc9;
+      border-radius: 50px;
+      padding: 60px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 48px;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+
+    th, td {
+      padding: 15px;
+      border: 1px solid #aaa;
+      font-size: 18px;
+    }
+
+    th {
+      background-color: #333;
+      color: #fff;
+    }
+
+    tr.best-row {
+      background-color: rgba(0, 255, 255, 0.2);
+      font-weight: bold;
+      border: 2px solid #00ffff;
+    }
+
+    .up {
+      color: green;
+      font-weight: bold;
+    }
+
+    .down {
+      color: red;
+      font-weight: bold;
+    }
+
+    .significant-value {
+      font-size: 1.5em;
+      background: linear-gradient(to right, #ff0000, #a200ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+      transition: color 0.3s ease;
+    }
+
+    a {
+      text-decoration: none;
+      color: #3498db;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: #e74c3c;
+    }
+
+    @keyframes emerge {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var resultContainer = document.querySelector(".result-container");
+      resultContainer.style.display = "block";
+    });
+  </script>
+</head>
+<body>
+  <video autoplay muted loop id="bg-video">
+    <source src="{{ url_for('static', filename='result.mp4') }}" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="result-container">
+    <h1>Prediction Results</h1>
+    <table>
+      <tr>
+        <th>Model</th>
+        <th>Accuracy</th>
+        <th>Predicted Close</th>
+        <th>Direction</th>
+      </tr>
+      {% for model, (accu, final) in results.items() %}
+      <tr class="{% if model == best_model[0] %}best-row{% endif %}">
+        <td>{{ model }}</td>
+        <td>{{ (accu*100)|round(2) }}%</td>
+        <td>{{ final[0]|round(4) }}</td>
+        <td class="{% if final[0] > opun %}up{% else %}down{% endif %}">
+          {% if final[0] > opun %}UP{% else %}DOWN{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <p><strong>Best Model:</strong><br />
+      <strong class="significant-value">{{ best_model[0] }}</strong> 
+      (Accuracy: <strong class="significant-value">{{ (best_model[1][0]*100)|round(2) }}%</strong>)
+    </p>
+
+    <p><a href="/">Make another prediction</a></p>
+  </div>
+</body>
+</html>
